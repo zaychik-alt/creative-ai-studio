@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101116">
+  <title>CREATIVE AI STUDIO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-mark">✳</span><span>CREATIVE <b>AI</b><small>STUDIO</small></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav-item active" data-page="create"><span>✧</span> Crear</button>
+      <button class="nav-item" data-page="gallery"><span>▦</span> Mi galería</button>
+      <div class="side-bottom">
+        <div class="status-card"><span class="status-dot"></span><div><b id="apiStatus">Comprobando conexión</b><small>OpenAI API</small></div></div>
+        <div class="profile"><div class="avatar">C</div><div><b>Espacio personal</b><small>Privado en este dispositivo</small></div></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="mobile-brand">✳ CREATIVE AI</div>
+        <div class="crumb">Workspace <span>/</span> <b id="crumbName">Crear</b></div>
+        <div class="top-right"><span class="private-pill">● MODO PRIVADO</span><button class="icon-btn" id="helpBtn" title="Ayuda">?</button></div>
+      </header>
+
+      <section id="createPage" class="page">
+        <div class="hero">
+          <div class="eyebrow"><span></span> TU ESPACIO CREATIVO CON IA</div>
+          <h1>Imagina. Crea.<br><em>Hazlo realidad.</em></h1>
+          <p>Convierte tus ideas en imágenes y videos con inteligencia artificial.</p>
+        </div>
+
+        <div class="mode-tabs">
+          <button class="mode-tab selected" data-mode="image"><span>▧</span> Imagen</button>
+          <button class="mode-tab" data-mode="video"><span>▷</span> Video</button>
+        </div>
+
+        <div class="workspace-grid">
+          <section class="control-panel">
+            <div class="panel-heading"><div><span class="step">01</span><h2 id="panelTitle">Describe tu imagen</h2></div><span class="sparkle">✧</span></div>
+            <label class="field-label" for="prompt">PROMPT</label>
+            <textarea id="prompt" rows="5" placeholder="Describe tu idea con todos los detalles que quieras..."></textarea>
+            <div class="prompt-hint">Consejo: describe el sujeto, el entorno, la iluminación y el estilo visual.</div>
+
+            <label class="field-label">IMAGEN DE REFERENCIA <span class="optional">OPCIONAL</span></label>
+            <label class="upload-zone" for="reference">
+              <input id="reference" type="file" accept="image/png,image/jpeg,image/webp">
+              <span class="upload-icon">↥</span><b>Sube una imagen</b><small>PNG, JPG o WEBP · Máximo 25 MB</small>
+              <img id="referencePreview" alt="Vista previa de referencia">
+              <button type="button" class="remove-ref" id="removeRef" hidden>Quitar imagen</button>
+            </label>
+
+            <div id="imageOptions" class="options">
+              <div class="option-row"><label for="imageModel">MODELO</label><select id="imageModel"><option value="gpt-image-2.5-sunburst">GPT Image · Precisión</option><option value="gpt-image-2.5-flare">GPT Image · Rápido</option></select></div>
+              <div class="option-row"><label for="imageSize">FORMATO</label><select id="imageSize"><option value="1024x1024">Cuadrado · 1:1</option><option value="1024x1536">Vertical · 2:3</option><option value="1536x1024">Horizontal · 3:2</option></select></div>
+              <div class="option-row"><label for="imageQuality">CALIDAD</label><select id="imageQuality"><option value="high">Alta</option><option value="medium">Media</option><option value="low">Borrador</option></select></div>
+            </div>
+
+            <div id="videoOptions" class="options" hidden>
+              <div class="option-row"><label for="videoModel">MODELO</label><select id="videoModel"><option value="sora-2">Sora 2</option><option value="sora-2-pro">Sora 2 Pro</option></select></div>
+              <div class="option-row"><label for="videoSize">ORIENTACIÓN</label><select id="videoSize"><option value="1280x720">Horizontal · 16:9</option><option value="720x1280">Vertical · 9:16</option></select></div>
+              <div class="option-row"><label for="videoSeconds">DURACIÓN</label><select id="videoSeconds"><option value="4">4 segundos</option><option value="8">8 segundos</option><option value="12">12 segundos</option></select></div>
+            </div>
+            <button class="generate-btn" id="generateBtn"><span>✧</span> Generar imagen <span class="arrow">↗</span></button>
+            <p class="cost-note">Las generaciones usan tu saldo de API y pueden tener coste.</p>
+          </section>
+
+          <section class="preview-panel">
+            <div class="preview-head"><div><span class="step">02</span><h2 id="previewTitle">Resultado</h2></div><span class="live-label"><i></i> VISTA PREVIA</span></div>
+            <div class="preview-stage" id="previewStage">
+              <div class="empty-state" id="emptyState"><div class="empty-art"><span>✧</span><div></div><div></div></div><h3>Tu próxima creación empieza aquí</h3><p>Escribe un prompt y genera tu primera imagen o video.</p></div>
+              <div class="loading-state" id="loadingState" hidden><div class="loader"></div><h3 id="loadingTitle">Creando tu imagen...</h3><p id="loadingText">La IA está trabajando en tu idea.</p></div>
+              <img id="resultImage" alt="Imagen generada" hidden>
+              <video id="resultVideo" controls playsinline hidden></video>
+            </div>
+            <div class="result-actions" id="resultActions" hidden><span id="resultLabel">Generación completada</span><a id="downloadBtn" class="download-btn" download>↓ Descargar</a></div>
+          </section>
+        </div>
+        <div class="footnote"><span>✳</span> Tus archivos de galería se guardan localmente en este navegador.</div>
+      </section>
+
+      <section id="galleryPage" class="page" hidden>
+        <div class="gallery-heading"><div><div class="eyebrow"><span></span> TU COLECCIÓN</div><h1>Mi <em>galería.</em></h1><p>Tus creaciones guardadas en este dispositivo.</p></div><button class="clear-btn" id="clearGallery">Limpiar galería</button></div>
+        <div class="gallery-filters"><button class="filter active" data-filter="all">Todo</button><button class="filter" data-filter="image">Imágenes</button><button class="filter" data-filter="video">Videos</button></div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+        <div class="gallery-empty" id="galleryEmpty"><span>▦</span><h3>Aún no hay creaciones</h3><p>Cuando generes imágenes o videos, aparecerán aquí.</p><button class="primary-small" id="backToCreate">Crear mi primera obra</button></div>
+      </section>
+
+      <footer>CREATIVE AI STUDIO <span>·</span> Creado para explorar ideas</footer>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <dialog id="helpDialog"><div class="dialog-inner"><button class="dialog-close" id="closeHelp">×</button><span class="eyebrow">AYUDA RÁPIDA</span><h2>Tu estudio creativo</h2><p><b>Imagen:</b> escribe una descripción. Si adjuntas una referencia, se utilizará para editarla o guiar el resultado.</p><p><b>Video:</b> describe la escena y, opcionalmente, adjunta una imagen para usarla como primer fotograma de referencia.</p><p><b>Privacidad:</b> la clave API permanece en el servidor. El historial se guarda en el almacenamiento local de este navegador.</p><p><b>Costes:</b> las llamadas a la API se cobran según el modelo, la calidad y la duración.</p></div></dialog>
+  <script src="/app.js"></script>
+</body>
+</html>
